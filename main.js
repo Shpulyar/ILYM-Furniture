@@ -1,101 +1,104 @@
 $(document).ready(function () {
-    $('.header__burger').click(function (event) {
-        $('.header__burger, .header__menu').toggleClass('active');
-        $('body').toggleClass('lock')
-    });
+  $('.header__burger').click(function (event) {
+    $('.header__burger, .header__menu').toggleClass('active');
+    $('body').toggleClass('lock')
+  });
 });
 
+// Slider
+const slider = function () {
+  const slides = document.querySelectorAll('.metal__slide');
+  const btnLeft = document.querySelector('.metal__btn--left');
+  const btnRight = document.querySelector('.metal__btn--right');
+  const dotContainer = document.querySelector('.metal__dots');
 
-let isMobile = {
-    Android: function () {
-        return navigator.userAgent.match(/Android/i);
-    },
-    BlackBerry: function () {
-        return navigator.userAgent.match(/BlackBerry/i);
-    },
-    iOS: function () {
-        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-    },
-    Opera: function () {
-        return navigator.userAgent.match(/Opera Mini/i);
-    },
-    Windows: function () {
-        return navigator.userAgent.match(/IEMobile/i);
-    },
-    any: function () {
-        return isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows();
-    },
-}
+  let curSlide = 0;
+  const maxSlide = slides.length;
 
-let body = document.querySelector('body');
+  // Functions
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="metal__dots-dot" data-slide="${i}"></button>`
+      );
+    });
+  };
 
-if (isMobile.any()) {
-    body.classList.add('touch');
-    let fire = document.querySelector('.fire');
-    fire.addEventListener('click', function () {
-        subMenu.classList.toggle('open');
-    })
+  const activateDot = function (slide) {
+    document
+      .querySelectorAll('.metal__dots-dot')
+      .forEach(dot => dot.classList.remove('metal__dots-dot--active'));
 
-} else {
-    body.classList.add('mouse');
-}
+    document
+      .querySelector(`.metal__dots-dot[data-slide="${slide}"]`)
+      .classList.add('metal__dots-dot--active');
+  };
 
+  const goToSlide = function (slide) {
+    slides.forEach(
+      (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+    );
+  };
 
-
-const prev = document.getElementById('btn-prev');
-const next = document.getElementById('btn-next');
-const slides = document.querySelectorAll('.slide');
-const dots = document.querySelectorAll('.dot');
-
-let index = 0;
-
-const activeSlide = n => {
-    for (const item of slides) {
-        item.classList.remove('active');
-    }
-    slides[n].classList.add('active');
-}
-const activeDot = n => {
-    for (i of dots) {
-        i.classList.remove('active');
-    }
-    dots[n].classList.add('active');
-}
-
-const prepareCurentSlide = ind => {
-    activeSlide(ind);
-    activeDot(ind);
-}
-
-const nextSlide = () => {
-    if (index == slides.length-1) {
-        index = 0;
-        prepareCurentSlide(index);
+  // Next slide
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) {
+      curSlide = 0;
     } else {
-        index++;
-        prepareCurentSlide(index);
+      curSlide++;
     }
-}
-const prevSlide = () => {
-    if (index == 0) {
-        index = slides.length - 1;
-        prepareCurentSlide(index);
+
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  const prevSlide = function () {
+    if (curSlide === 0) {
+      curSlide = maxSlide - 1;
     } else {
-        index--;
-        prepareCurentSlide(index);
+      curSlide--;
     }
-}
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
 
-dots.forEach((item, indexDot) => {
-    item.addEventListener('click', () => {
-        index = indexDot;
-        prepareCurentSlide(index);
-    })
-})
+  const init = function () {
+    goToSlide(0);
+    createDots();
 
-next.addEventListener('click', nextSlide);
-prev.addEventListener('click', prevSlide);
+    activateDot(0);
+  };
+  init();
+
+  // Event handlers
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
+
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('metal__dots-dot')) {
+      const {
+        slide
+      } = e.target.dataset;
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
+};
+slider();
 
 
+
+// let a = document.getElementById('a');
+// let bear = document.querySelector('.bear');
+// console.log(bear);
+
+const audio = new Audio();
+audio.src = "./audio/cat-meow-sound.mp3"
 
 
