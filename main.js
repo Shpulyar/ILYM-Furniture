@@ -99,6 +99,11 @@ slider();
 // console.log(bear);
 
 const audio = new Audio();
-audio.src = "./audio/cat-meow-sound.mp3"
+audio.src = "./audio/click.wav";
+
+const audioClick = new Audio();
+audio.src = "./audio/bear-roar.wav";
+
+
 
 
